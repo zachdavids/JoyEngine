@@ -14,7 +14,6 @@ namespace Engine
 		void Create();
 	private:
 		int m_ID;
-
 		int LoadShader(std::string const& path, GLuint type) const;
 		int Compile(GLuint vertex_id, GLuint fragment_id) const;
 	};

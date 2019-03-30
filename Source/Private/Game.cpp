@@ -31,7 +31,7 @@ void Game::Start()
 
 	while (!window.IsCloseRequested())
 	{
-		window.Prepare();
+		//window.Prepare();
 	}
 
 	window.Destroy();
