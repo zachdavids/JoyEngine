@@ -4,15 +4,16 @@
 #include <iostream>
 #include <vector>
 
-Engine::Shader::Shader(std::string const& vertex_path, std::string const& fragment_path) :
-	m_VertexPath(vertex_path), m_FragmentPath(fragment_path)
+Engine::Shader::Shader(std::string const& path) : Resource(path)
 {
 }
 
 void Engine::Shader::Create()
 {
-	int vertex_id = LoadShader(m_VertexPath, GL_VERTEX_SHADER);
-	int fragment_id = LoadShader(m_FragmentPath, GL_FRAGMENT_SHADER);
+	const std::string vertex = "Vertex.glsl";
+	const std::string fragment = "Fragment.glsl";
+	int vertex_id = LoadShader(m_Path + vertex, GL_VERTEX_SHADER);
+	int fragment_id = LoadShader(m_Path + fragment, GL_FRAGMENT_SHADER);
 	m_ID = Compile(vertex_id, fragment_id);
 }
 

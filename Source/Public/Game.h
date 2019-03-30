@@ -2,14 +2,13 @@
 
 #include "ResourceManager.h"
 
-namespace Engine
+class Game
 {
-	class Game
-	{
-	public:
-		Game();
-	private:
-		ResourceManager m_ResourceManager;
-	};
-}
+public:
+	Game() = default;
+	void Start();
+private:
+	void SetupResources();
+	Engine::ResourceManager m_ResourceManager;
+};
 

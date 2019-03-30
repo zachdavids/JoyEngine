@@ -2,26 +2,8 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 
-//TODO: Add Lua config file for Window settings
-
-int main()
-{
-	Engine::WindowManager window;
-	if (!window.TryCreate())
-	{
-		return 1;
-	}
-
-	while (!window.IsCloseRequested())
-	{
-		window.Prepare();
-	}
-
-	window.Destroy();
-	return 0;
-}
+//TODO: Add Lua config file for Window setting
 
 bool Engine::WindowManager::TryCreate()
 {

@@ -9,13 +9,15 @@ namespace Engine
 {
 	class ResourceManager
 	{
+	public:
 		enum class Type
 		{
-			kShader,
+			kShader
 		};
-	public:
+
 		ResourceManager() = default;
-		void AddResource(Type type, std::string const& name, std::string const& path_one, std::string const& path_two = "");
+		void AddResource(Type type, std::string const& name, std::string const& path);
+		void CreateResources();
 	private:
 		using resource_map = std::unordered_map<std::string, std::unique_ptr<Resource>>;
 		resource_map m_Resources;
