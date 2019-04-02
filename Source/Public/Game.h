@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ResourceManager.h"
+#include "Level.h"
 
 class Game
 {
@@ -10,5 +11,6 @@ public:
 private:
 	void SetupResources();
 	Engine::ResourceManager m_ResourceManager;
+	Engine::Level m_Level;
 };
 

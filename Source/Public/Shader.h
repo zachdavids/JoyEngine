@@ -12,6 +12,7 @@ namespace Engine
 	public:
 		Shader(std::string const& path);
 		void Create();
+		void Use() const;
 	private:
 		int m_ID;
 		int LoadShader(std::string const& path, GLuint type) const;

@@ -1,6 +1,8 @@
 #include "ResourceManager.h"
 #include "Shader.h"
 
+#include <iostream>
+
 void Engine::ResourceManager::AddResource(Type type, std::string const& name, 
 	std::string const& path)
 {
@@ -10,13 +12,6 @@ void Engine::ResourceManager::AddResource(Type type, std::string const& name,
 		m_Resources.emplace(name, std::make_unique<Shader>(path));
 		break;
 	}
-}
 
-void Engine::ResourceManager::CreateResources()
-{
-	resource_map::iterator it = m_Resources.begin();
-	while (it != m_Resources.end())
-	{
-		it->second->Create();
-	}
+	m_Resources.find(name)->second->Create();
 }

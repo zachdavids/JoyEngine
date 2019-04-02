@@ -30,7 +30,13 @@ bool Engine::WindowManager::TryCreate()
 	return true;
 }
 
-void Engine::WindowManager::Prepare() const
+void Engine::WindowManager::Clear() const
+{
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void Engine::WindowManager::SwapAndPoll() const
 {
 	glfwSwapBuffers(m_Window);
 	glfwPollEvents();

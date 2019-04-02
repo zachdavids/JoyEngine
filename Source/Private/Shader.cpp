@@ -12,9 +12,15 @@ void Engine::Shader::Create()
 {
 	const std::string vertex = "Vertex.glsl";
 	const std::string fragment = "Fragment.glsl";
+
 	int vertex_id = LoadShader(m_Path + vertex, GL_VERTEX_SHADER);
 	int fragment_id = LoadShader(m_Path + fragment, GL_FRAGMENT_SHADER);
 	m_ID = Compile(vertex_id, fragment_id);
+}
+
+void Engine::Shader::Use() const
+{
+	glUseProgram(m_ID);
 }
 
 int Engine::Shader::LoadShader(std::string const& path, GLuint type) const

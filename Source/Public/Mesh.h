@@ -13,6 +13,7 @@ namespace Engine
 	public:
 		Mesh(std::vector<Vertex> const& vertices, std::vector<unsigned int> const& indices);
 		void Create();
+		GLuint GetVAO() const { return m_VAO; }
 	private:
 		GLuint m_VAO;
 		GLuint m_EBO;
