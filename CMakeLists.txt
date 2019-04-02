@@ -24,10 +24,13 @@ include_directories(${LIBRARY_PATH}/include
                     Source/Public)
 if(NOT WIN32)
     find_library(GLFW_LIB glfw3)
+	find_library(ASSIMP_LIB glfw3)
 elseif(WIN32)
     find_library(GLFW_LIB glfw3 HINTS ${LIBRARY_PATH}/lib/GLFW)
+	find_library(ASSIMP_LIB assimp-vc140-mt HINTS ${LIBRARY_PATH}/lib/assimp)
 endif(NOT WIN32)
 target_link_libraries(Wolfenstein ${GLFW_LIB})
+target_link_libraries(Wolfenstein ${ASSIMP_LIB})
 
 # The rules here are specific to Windows Systems
 if(WIN32)

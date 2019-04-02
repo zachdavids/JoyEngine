@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "Vertex.h"
 #include "Shader.h"
+#include "Texture.h"
 
 #include <iostream>
 
@@ -34,10 +35,10 @@ void Game::Start()
 	//-----------------------------------------------------------------
 	//TODO REMOVE
 	std::vector<Engine::Vertex> vertices;
-	vertices.push_back(Engine::Vertex{ glm::vec3(0.5, 0.5, 0) });
-	vertices.push_back(Engine::Vertex{ glm::vec3(0.5, -0.5, 0) });
-	vertices.push_back(Engine::Vertex{ glm::vec3(-0.5, -0.5, 0) });
-	vertices.push_back(Engine::Vertex{ glm::vec3(-0.5, 0.5, 1) });
+	vertices.push_back(Engine::Vertex{ glm::vec3(0.5f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f) });
+	vertices.push_back(Engine::Vertex{ glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f) });
+	vertices.push_back(Engine::Vertex{ glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f) });
+	vertices.push_back(Engine::Vertex{ glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f) });
 
 	std::vector<unsigned int> indices;
 	indices.push_back(0);
@@ -50,6 +51,10 @@ void Game::Start()
 
 	Engine::Mesh test_mesh(vertices, indices);
 	test_mesh.Create();
+
+	Engine::Texture test_texture("Resources/Textures/Tiles/TileTextures.png", "Diffuse");
+	test_texture.Create();
+	test_texture.BindTexture();
 	//-----------------------------------------------------------------
 
 	while (!window.IsCloseRequested())

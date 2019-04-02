@@ -9,6 +9,7 @@ namespace Engine
 	public:
 		Texture(std::string const& path, std::string const& type);
 		void Create();
+		void BindTexture() const;
 	private:
 		unsigned int m_ID;
 		std::string m_Type;

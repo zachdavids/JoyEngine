@@ -22,8 +22,7 @@ namespace Engine
 		T* GetResource(std::string const& name) const { return dynamic_cast<T*>(m_Resources.find(name)->second.get()); }
 
 	private:
-		using resource_map = std::unordered_map<std::string, std::unique_ptr<Resource>>;
-		resource_map m_Resources;
+		std::unordered_map<std::string, std::unique_ptr<Resource>> m_Resources;
 	};
 }
 

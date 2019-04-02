@@ -16,6 +16,7 @@ void Engine::Texture::Create()
 	int width;
 	int height; 
 	int components;
+	stbi_set_flip_vertically_on_load(true);  
 	unsigned char *data = stbi_load(m_Path.c_str(), &width, &height, &components, 0);
 
 	GLenum format;
@@ -41,4 +42,10 @@ void Engine::Texture::Create()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	stbi_image_free(data);
+}
+
+void Engine::Texture::BindTexture() const
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_ID);
 }
