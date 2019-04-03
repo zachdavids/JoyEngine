@@ -4,7 +4,7 @@
 
 #include <glad/glad.h>
 
-Engine::Texture::Texture(std::string const& path, std::string const& type) :
+Engine::Texture::Texture(std::string const& path, Type type) :
 	Resource(path), m_Type(type)
 {
 }

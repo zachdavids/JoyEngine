@@ -7,12 +7,21 @@ namespace Engine
 	class Texture : public Resource
 	{
 	public:
-		Texture(std::string const& path, std::string const& type);
+
+		enum class Type
+		{
+			kDiffuse,
+			kSpecular,
+			kNormals,
+			kHeight
+		};
+
+		Texture(std::string const& path, Type type);
 		void Create();
 		void BindTexture() const;
 	private:
 		unsigned int m_ID;
-		std::string m_Type;
+		Type m_Type;
 	};
 }
 

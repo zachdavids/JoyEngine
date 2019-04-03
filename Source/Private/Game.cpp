@@ -6,6 +6,7 @@
 #include "Vertex.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "ModelLoader.h"
 
 #include <iostream>
 
@@ -52,19 +53,37 @@ void Game::Start()
 	Engine::Mesh test_mesh(vertices, indices);
 	test_mesh.Create();
 
-	Engine::Texture test_texture("Resources/Textures/Tiles/TileTextures.png", "Diffuse");
+	Engine::Texture test_texture("Resources/Textures/Tiles/TileTextures.png", Engine::Texture::Type::kDiffuse);
 	test_texture.Create();
 	test_texture.BindTexture();
+
+	Engine::ModelLoader test_model;
+	Engine::Model model = test_model.Load("Resources/Models/Arwing.obj");
 	//-----------------------------------------------------------------
 
 	while (!window.IsCloseRequested())
 	{
 		window.Clear();
 
-		//TODO temp Render
+		//TEMP QUAD RENDER
+		/*
 		m_ResourceManager.GetResource<Engine::Shader>("DefaultShader")->Use();
 		glBindVertexArray(test_mesh.GetVAO());
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		*/
+
+		//TEMP MODEL RENDER
+		for (int i = 0; i != model.m_Meshes.size(); ++i)
+		{
+			model.m_Meshes[i].Create();
+			for (int j = 0; j != model.m_Textures[i].size(); ++j)
+			{
+				model.m_Textures[i][j].Create();
+				model.m_Textures[i][j].BindTexture();
+			}
+			glBindVertexArray(model.m_Meshes[i].GetVAO());
+			glDrawElements(GL_TRIANGLES, model.m_Meshes[i].GetSize(), GL_UNSIGNED_INT, 0);
+		}
 
 		window.SwapAndPoll();
 	}
