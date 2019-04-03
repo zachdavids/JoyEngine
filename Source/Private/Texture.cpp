@@ -44,8 +44,8 @@ void Engine::Texture::Create()
 	stbi_image_free(data);
 }
 
-void Engine::Texture::BindTexture() const
+void Engine::Texture::BindTexture(unsigned int index) const
 {
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0 + index);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
 }

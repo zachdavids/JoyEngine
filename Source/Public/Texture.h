@@ -18,7 +18,7 @@ namespace Engine
 
 		Texture(std::string const& path, Type type);
 		void Create();
-		void BindTexture() const;
+		void BindTexture(unsigned int index) const;
 	private:
 		unsigned int m_ID;
 		Type m_Type;

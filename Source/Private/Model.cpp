@@ -1,4 +1,4 @@
-#include "ModelLoader.h"
+#include "Model.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -7,39 +7,43 @@
 ///MODELS LOADED MUST HAVE CREATE() CALLED ON MESHES AND TEXTURES
 ///TODO: TIE INTO RESOURCEMANAGER
 
-Engine::Model Engine::ModelLoader::Load(std::string const& path) const
+Engine::Model::Model(std::string const& path) :
+	Resource(path)
 {
-	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
-
-	Model model;
-	ProcessNode(model, scene->mRootNode, scene, path);
-	return model;
 }
 
-void Engine::ModelLoader::ProcessNode(Model& out_model, aiNode* node, const aiScene* scene, std::string const& path) const
+void Engine::Model::Create()
+{
+	Assimp::Importer import;
+	const aiScene* scene = import.ReadFile(m_Path, aiProcessPreset_TargetRealtime_MaxQuality);
+	ProcessNode(scene->mRootNode, scene);
+}
+
+void Engine::Model::ProcessNode(aiNode* node, const aiScene* scene)
 {
 	for (unsigned int i = 0; i != node->mNumMeshes; ++i)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		out_model.m_Meshes.push_back(ProcessMesh(mesh, scene));
-		out_model.m_Textures.push_back(ProcessTextures(scene->mMaterials[mesh->mMaterialIndex], path));
+		ProcessMesh(mesh, scene);
+		ProcessTextures(scene->mMaterials[mesh->mMaterialIndex]);
 	}
 	for (unsigned int i = 0; i != node->mNumChildren; ++i)
 	{
-		ProcessNode(out_model, node->mChildren[i], scene, path);
+		ProcessNode(node->mChildren[i], scene);
 	}
 }
 
-Engine::Mesh Engine::ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene) const
+void Engine::Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices = CreateVertices(mesh);
 	std::vector<unsigned int> indices = CreateIndices(mesh);
 
-	return Mesh(vertices, indices);
+	Mesh new_mesh(vertices, indices);
+	new_mesh.Create();
+	m_Meshes.push_back(new_mesh);
 }
 
-std::vector<Engine::Vertex> Engine::ModelLoader::CreateVertices(aiMesh* mesh) const
+std::vector<Engine::Vertex> Engine::Model::CreateVertices(aiMesh* mesh) const
 {
 	std::vector<Vertex> vertices;
 	for (unsigned int i = 0; i != mesh->mNumVertices; ++i)
@@ -77,7 +81,7 @@ std::vector<Engine::Vertex> Engine::ModelLoader::CreateVertices(aiMesh* mesh) co
 	return vertices;
 }
 
-std::vector<unsigned int> Engine::ModelLoader::CreateIndices(aiMesh* mesh) const
+std::vector<unsigned int> Engine::Model::CreateIndices(aiMesh* mesh) const
 {
 	std::vector<unsigned int> indices;
 	for (unsigned int i = 0; i != mesh->mNumFaces; ++i)
@@ -91,24 +95,25 @@ std::vector<unsigned int> Engine::ModelLoader::CreateIndices(aiMesh* mesh) const
 	return indices;
 }
 
-std::vector<Engine::Texture> Engine::ModelLoader::ProcessTextures(aiMaterial* material, std::string const& path) const
+void Engine::Model::ProcessTextures(aiMaterial* material)
 {
 	std::vector<Texture> textures;
-	std::vector<Texture> diffuse = CreateTextures(material, aiTextureType_DIFFUSE, Texture::Type::kDiffuse, path);
+	std::vector<Texture> diffuse = CreateTextures(material, aiTextureType_DIFFUSE, Texture::Type::kDiffuse);
 	textures.insert(std::end(textures), std::begin(diffuse), std::end(diffuse));
 
-	std::vector<Texture> specular = CreateTextures(material, aiTextureType_SPECULAR, Texture::Type::kSpecular, path);
+	std::vector<Texture> specular = CreateTextures(material, aiTextureType_SPECULAR, Texture::Type::kSpecular);
 	textures.insert(std::end(textures), std::begin(specular), std::end(specular));
 
-	std::vector<Texture> normal = CreateTextures(material, aiTextureType_NORMALS, Texture::Type::kNormals, path);
+	std::vector<Texture> normal = CreateTextures(material, aiTextureType_NORMALS, Texture::Type::kNormals);
 	textures.insert(std::end(textures), std::begin(normal), std::end(normal));
 
-	std::vector<Texture> height = CreateTextures(material, aiTextureType_HEIGHT, Texture::Type::kHeight, path);
+	std::vector<Texture> height = CreateTextures(material, aiTextureType_HEIGHT, Texture::Type::kHeight);
 	textures.insert(std::end(textures), std::begin(height), std::end(height));
-	return textures;
+
+	m_Textures.push_back(textures);
 }
 
-std::vector<Engine::Texture> Engine::ModelLoader::CreateTextures(aiMaterial* material, aiTextureType ai_type, Texture::Type type, std::string const& path) const
+std::vector<Engine::Texture> Engine::Model::CreateTextures(aiMaterial* material, aiTextureType ai_type, Texture::Type type) const
 {
 	std::vector<Texture> textures;
 	for (unsigned int i = 0; i != material->GetTextureCount(ai_type); ++i)
@@ -116,7 +121,8 @@ std::vector<Engine::Texture> Engine::ModelLoader::CreateTextures(aiMaterial* mat
 		aiString name;
 		material->GetTexture(ai_type, i, &name);
 
-		Texture texture(path.substr(0, path.find_last_of('/')) + "/" + name.C_Str(), type);
+		Texture texture(m_Path.substr(0, m_Path.find_last_of('/')) + "/" + name.C_Str(), type);
+		texture.Create();
 		textures.push_back(texture);
 	}
 	return textures;
