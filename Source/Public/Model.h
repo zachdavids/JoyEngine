@@ -25,6 +25,7 @@ namespace Engine
 	private:
 		std::vector<Mesh> m_Meshes;
 		std::vector<std::vector<Texture>> m_Textures;
+		static const std::string m_Directory;
 
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		void ProcessMesh(aiMesh* mesh, const aiScene* scene);

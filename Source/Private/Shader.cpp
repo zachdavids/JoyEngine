@@ -4,7 +4,9 @@
 #include <iostream>
 #include <vector>
 
-Engine::Shader::Shader(std::string const& path) : Resource(path)
+const std::string Engine::Shader::m_Directory = "Resources/Shaders/";
+
+Engine::Shader::Shader(std::string const& path) : Resource(m_Directory + path)
 {
 }
 

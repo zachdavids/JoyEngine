@@ -4,11 +4,9 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-///MODELS LOADED MUST HAVE CREATE() CALLED ON MESHES AND TEXTURES
-///TODO: TIE INTO RESOURCEMANAGER
+const std::string Engine::Model::m_Directory = "Resources/Models/";
 
-Engine::Model::Model(std::string const& path) :
-	Resource(path)
+Engine::Model::Model(std::string const& path) : Resource(m_Directory + path)
 {
 }
 
@@ -115,6 +113,7 @@ void Engine::Model::ProcessTextures(aiMaterial* material)
 
 std::vector<Engine::Texture> Engine::Model::CreateTextures(aiMaterial* material, aiTextureType ai_type, Texture::Type type) const
 {
+	//TODO CHECK FOR PRE-LOADED TEXTURES
 	std::vector<Texture> textures;
 	for (unsigned int i = 0; i != material->GetTextureCount(ai_type); ++i)
 	{

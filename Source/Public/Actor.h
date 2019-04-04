@@ -5,8 +5,10 @@ namespace Engine
 	class Actor
 	{
 	public:
-		Actor();
-		~Actor();
+		virtual void Create() = 0;
+		virtual void Update() = 0;
+	protected:
+		int m_ID;
 	};
 }
 
