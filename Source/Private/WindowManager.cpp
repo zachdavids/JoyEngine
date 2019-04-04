@@ -11,6 +11,7 @@ bool Engine::WindowManager::TryCreate()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	m_Window = glfwCreateWindow(800, 600, "Wolfenstein Remastered", nullptr, nullptr);
 	if (!m_Window) 
@@ -25,6 +26,7 @@ bool Engine::WindowManager::TryCreate()
 		return false; 
 	}
 
+	glEnable(GL_MULTISAMPLE);
 	glViewport(0, 0, 800, 600);
 	
 	return true;
