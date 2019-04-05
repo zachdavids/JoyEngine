@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <glm/gtc/type_ptr.hpp>
 
 const std::string Engine::Shader::m_Directory = "Resources/Shaders/";
 
@@ -23,6 +24,11 @@ void Engine::Shader::Create()
 void Engine::Shader::Use() const
 {
 	glUseProgram(m_ID);
+}
+
+void Engine::Shader::SetMat4(std::string const& name, glm::mat4 value)
+{
+	glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
 
 int Engine::Shader::LoadShader(std::string const& path, GLuint type) const

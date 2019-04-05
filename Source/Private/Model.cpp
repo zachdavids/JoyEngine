@@ -13,8 +13,31 @@ Engine::Model::Model(std::string const& path) : Resource(m_Directory + path)
 void Engine::Model::Create()
 {
 	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(m_Path, aiProcessPreset_TargetRealtime_MaxQuality);
+	const aiScene* scene = import.ReadFile(
+		m_Path, 
+		aiProcess_Triangulate |
+		aiProcess_CalcTangentSpace |
+		aiProcess_GenSmoothNormals |
+		aiProcess_ImproveCacheLocality |
+		aiProcess_LimitBoneWeights |
+		aiProcess_RemoveRedundantMaterials |
+		aiProcess_SplitLargeMeshes |
+		aiProcess_Triangulate |
+		aiProcess_GenUVCoords |
+		aiProcess_SortByPType |
+		aiProcess_FindDegenerates |
+		aiProcess_FindInvalidData |
+		aiProcess_FindInstances |
+		aiProcess_ValidateDataStructure |
+		aiProcess_OptimizeMeshes |
+		aiProcess_Debone
+	);
 	ProcessNode(scene->mRootNode, scene);
+
+	for (int i = 0; i != m_Meshes.size(); i++)
+	{
+		m_Meshes[i].Create();
+	}
 }
 
 void Engine::Model::ProcessNode(aiNode* node, const aiScene* scene)
@@ -36,9 +59,7 @@ void Engine::Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<Vertex> vertices = CreateVertices(mesh);
 	std::vector<unsigned int> indices = CreateIndices(mesh);
 
-	Mesh new_mesh(vertices, indices);
-	new_mesh.Create();
-	m_Meshes.push_back(new_mesh);
+	m_Meshes.push_back(Mesh(vertices, indices));
 }
 
 std::vector<Engine::Vertex> Engine::Model::CreateVertices(aiMesh* mesh) const

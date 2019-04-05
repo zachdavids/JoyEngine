@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Actor.h"
+#include "GameObject.h"
 #include "ResourceManager.h"
 #include "Model.h"
 #include "Shader.h"
 
 namespace Engine
 {
-	class Player : public Actor
+	class Player : public GameObject
 	{
 	public:
 		Player(ResourceManager const& resource_manager);

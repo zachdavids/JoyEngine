@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-	class Actor
+	class GameObject
 	{
 	public:
 		virtual void Create() = 0;

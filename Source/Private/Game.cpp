@@ -24,7 +24,7 @@ void Game::SetupResources()
 	m_ResourceManager.AddResource(
 		Engine::ResourceManager::Type::kModel,
 		"Arwing",
-		"Arwing.obj"
+		"Arwing/Arwing.obj"
 	);
 }
 
