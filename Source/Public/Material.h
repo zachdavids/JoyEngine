@@ -8,7 +8,7 @@ namespace Engine
 	class Material
 	{
 	public:
-		Material(); 
+		Material() = default; 
 	private:
 		float m_Metallic{ 0.f };
 		float m_Smoothness{ 0.f };

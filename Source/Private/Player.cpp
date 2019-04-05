@@ -11,12 +11,9 @@ Engine::Player::Player(ResourceManager const& resource_manager) :
 {
 }
 
-void Engine::Player::Create()
-{
-}
-
 void Engine::Player::Update()
 {
+	GameObject::Update();
 }
 
 //TODO temporary
@@ -25,7 +22,12 @@ void Engine::Player::Render() const
 	//TEMP
 	//---------------------------------------------------------------------------
 	glm::mat4 model = glm::mat4(1.0f);
+	//model = glm::translate(model, m_Transform.m_Position);
+	//model = glm::rotate(model, glm::radians(m_Transform.m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	//model = glm::rotate(model, glm::radians(m_Transform.m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	//model = glm::rotate(model, glm::radians(m_Transform.m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 	model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+	//model = glm::scale(model, m_Transform.m_Scale);
 
 	glm::mat4 view = glm::mat4(1.0f);
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));

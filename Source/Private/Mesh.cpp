@@ -1,4 +1,4 @@
-#include "Mesh.h"
+ #include "Mesh.h"
 
 Engine::Mesh::Mesh(std::vector<Vertex> const& vertices, std::vector<unsigned int> const& indices) :
 	m_Vertices(vertices), m_Indices(indices)

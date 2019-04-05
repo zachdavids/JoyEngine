@@ -11,7 +11,6 @@ namespace Engine
 	{
 	public:
 		Player(ResourceManager const& resource_manager);
-		void Create();
 		void Update();
 		//TODO REPLACE WITH MODEL COMPONENT RENDER
 		void Render() const;
