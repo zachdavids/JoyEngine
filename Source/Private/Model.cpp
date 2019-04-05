@@ -13,25 +13,7 @@ Engine::Model::Model(std::string const& path) : Resource(m_Directory + path)
 void Engine::Model::Create()
 {
 	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(
-		m_Path, 
-		aiProcess_Triangulate |
-		aiProcess_CalcTangentSpace |
-		aiProcess_GenSmoothNormals |
-		aiProcess_ImproveCacheLocality |
-		aiProcess_LimitBoneWeights |
-		aiProcess_RemoveRedundantMaterials |
-		aiProcess_SplitLargeMeshes |
-		aiProcess_Triangulate |
-		aiProcess_GenUVCoords |
-		aiProcess_SortByPType |
-		aiProcess_FindDegenerates |
-		aiProcess_FindInvalidData |
-		aiProcess_FindInstances |
-		aiProcess_ValidateDataStructure |
-		aiProcess_OptimizeMeshes |
-		aiProcess_Debone
-	);
+	const aiScene* scene = import.ReadFile(m_Path, aiProcessPreset_TargetRealtime_MaxQuality);
 	ProcessNode(scene->mRootNode, scene);
 
 	for (int i = 0; i != m_Meshes.size(); i++)
@@ -72,29 +54,21 @@ std::vector<Engine::Vertex> Engine::Model::CreateVertices(aiMesh* mesh) const
 		vertex.m_Position.y = mesh->mVertices[i].y;
 		vertex.m_Position.z = mesh->mVertices[i].z;
 
-		if (mesh->mNormals)
-		{
-			vertex.m_Normal.x = mesh->mNormals[i].x;
-			vertex.m_Normal.y = mesh->mNormals[i].y;
-			vertex.m_Normal.z = mesh->mNormals[i].z;
-		}
+		vertex.m_Normal.x = mesh->mNormals[i].x;
+		vertex.m_Normal.y = mesh->mNormals[i].y;
+		vertex.m_Normal.z = mesh->mNormals[i].z;
 
-		if (mesh->mTextureCoords[0])
-		{
-			vertex.m_UV.x = mesh->mTextureCoords[0][i].x;
-			vertex.m_UV.y = mesh->mTextureCoords[0][i].y;
-		}
+		vertex.m_UV.x = mesh->mTextureCoords[0][i].x;
+		vertex.m_UV.y = mesh->mTextureCoords[0][i].y;
 
-		if (mesh->HasTangentsAndBitangents())
-		{
-			vertex.m_Tangent.x = mesh->mTangents[i].x;
-			vertex.m_Tangent.y = mesh->mTangents[i].y;
-			vertex.m_Tangent.z = mesh->mTangents[i].z;
+		vertex.m_Tangent.x = mesh->mTangents[i].x;
+		vertex.m_Tangent.y = mesh->mTangents[i].y;
+		vertex.m_Tangent.z = mesh->mTangents[i].z;
 
-			vertex.m_Bitangent.x = mesh->mBitangents[i].x;
-			vertex.m_Bitangent.y = mesh->mBitangents[i].y;
-			vertex.m_Bitangent.z = mesh->mBitangents[i].z;
-		}
+		vertex.m_Bitangent.x = mesh->mBitangents[i].x;
+		vertex.m_Bitangent.y = mesh->mBitangents[i].y;
+		vertex.m_Bitangent.z = mesh->mBitangents[i].z;
+
 		vertices.push_back(vertex);
 	}
 	return vertices;

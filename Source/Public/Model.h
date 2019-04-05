@@ -5,7 +5,6 @@
 
 #include <assimp/material.h>
 #include <string>
-#include <iostream>
 
 struct aiNode;
 struct aiScene;

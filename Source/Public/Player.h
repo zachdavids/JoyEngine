@@ -14,7 +14,7 @@ namespace Engine
 		void Create();
 		void Update();
 		//TODO REPLACE WITH MODEL COMPONENT RENDER
-		void Render();
+		void Render() const;
 	private:
 		//TODO REPLACE WITH SOME SORT OF MODEL COMPONENT
 		std::shared_ptr<Shader> m_Shader;

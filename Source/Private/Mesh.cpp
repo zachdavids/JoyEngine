@@ -34,7 +34,7 @@ void Engine::Mesh::CreateVBO()
 	glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(Vertex), &m_Vertices[0], GL_STATIC_DRAW);
 }
 
-void Engine::Mesh::EnableAttributes()
+void Engine::Mesh::EnableAttributes() const
 {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
@@ -52,7 +52,7 @@ void Engine::Mesh::EnableAttributes()
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_Bitangent));
 }
 
-void Engine::Mesh::UnbindVAO()
+void Engine::Mesh::UnbindVAO() const
 {
 	glBindVertexArray(0);
 }

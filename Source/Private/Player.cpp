@@ -20,7 +20,7 @@ void Engine::Player::Update()
 }
 
 //TODO temporary
-void Engine::Player::Render()
+void Engine::Player::Render() const
 {
 	//TEMP
 	//---------------------------------------------------------------------------

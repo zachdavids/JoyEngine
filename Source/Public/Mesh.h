@@ -14,7 +14,7 @@ namespace Engine
 		Mesh(std::vector<Vertex> const& vertices, std::vector<unsigned int> const& indices);
 		void Create();
 		GLuint GetVAO() const { return m_VAO; }
-		int GetSize() const { return m_Vertices.size(); }
+		int GetSize() const { return m_Indices.size(); }
 	private:
 		GLuint m_VAO;
 		GLuint m_EBO;
@@ -25,8 +25,8 @@ namespace Engine
 		void CreateVAO();
 		void CreateEBO();
 		void CreateVBO();
-		void EnableAttributes();
-		void UnbindVAO();
+		void EnableAttributes() const;
+		void UnbindVAO() const;
 	};
 }
 
