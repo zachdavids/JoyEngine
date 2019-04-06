@@ -15,8 +15,7 @@ Engine::Player::Player(ResourceManager const& resource_manager, glm::vec3 positi
 void Engine::Player::Update()
 {
 	GameObject::Update();
-	//m_Transform.m_Position += glm::vec3(0.f, 0.f, 0.01);
-	m_Transform.m_LocalRotation.y = (float)glfwGetTime() * glm::radians(50.0f) * 15;
+	m_Transform.m_LocalRotation.y += (float)glfwGetTime() * glm::radians(1.0f);
 }
 
 //TODO temporary
@@ -26,9 +25,9 @@ void Engine::Player::Render() const
 	//---------------------------------------------------------------------------
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, m_Transform.m_Position);
-	//model = glm::rotate(model, glm::radians(m_Transform.m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	//model = glm::rotate(model, glm::radians(m_Transform.m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	//model = glm::rotate(model, glm::radians(m_Transform.m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::rotate(model, glm::radians(m_Transform.m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(m_Transform.m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(m_Transform.m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 	model = glm::scale(model, m_Transform.m_LocalScale);
 
 	m_Shader->Use();

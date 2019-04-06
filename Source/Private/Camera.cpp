@@ -2,6 +2,10 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <GLFW/glfw3.h>
+
+//TODO	ADD 3RD PERSON CAMERA 
+//		RESTRICT DISTANCE BETWEEN PARENT AND CHILD IN FPS CAMERA
 
 Engine::Camera::Camera(glm::vec3 local_position)
 {
@@ -14,9 +18,11 @@ void Engine::Camera::Update()
 {
 	if (m_Parent)
 	{
-		m_Transform.m_Position = m_Parent->m_Transform.m_Position + m_Transform.m_LocalPosition;
-		//TODO FIX RELATIVE CAMERA ROTATION TO PARENT
-		m_Transform.m_Rotation = m_Transform.m_LocalRotation; //m_Parent->m_Transform.m_Rotation +
+		m_Transform.m_Position = m_Parent->m_Transform.m_Position;
+
+		m_Transform.m_Rotation.x = m_Parent->m_Transform.m_Rotation.x + m_Transform.m_LocalRotation.x;
+		m_Transform.m_Rotation.y = -m_Parent->m_Transform.m_Rotation.y + m_Transform.m_LocalRotation.y;
+		m_Transform.m_Rotation.z = m_Parent->m_Transform.m_Rotation.z; +m_Transform.m_LocalRotation.z;
 	}
 	else
 	{
@@ -24,7 +30,6 @@ void Engine::Camera::Update()
 		m_Transform.m_Rotation = m_Transform.m_LocalRotation;
 	}
 
-	std::cout << m_Transform.m_Rotation.x << "." << m_Transform.m_Rotation.y << "." << m_Transform.m_Rotation.z << std::endl;
 	CalculateVectors();
 	CalculateViewMatrix();
 }
