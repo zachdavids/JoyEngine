@@ -20,10 +20,10 @@ namespace Engine
 		void AddResource(Type type, std::string const& name, std::string const& path);
 
 		template <typename T>
-		std::shared_ptr<T> GetResource(std::string const& name) const { return std::dynamic_pointer_cast<T>(m_Resources.find(name)->second); }
+		T* GetResource(std::string const& name) const { return dynamic_cast<T*>(m_Resources.find(name)->second.get()); }
 
 	private:
-		std::unordered_map<std::string, std::shared_ptr<Resource>> m_Resources;
+		std::unordered_map<std::string, std::unique_ptr<Resource>> m_Resources;
 	};
 }
 

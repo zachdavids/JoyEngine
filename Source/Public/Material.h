@@ -12,8 +12,8 @@ namespace Engine
 	private:
 		float m_Metallic{ 0.f };
 		float m_Smoothness{ 0.f };
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<Texture> m_Albedo;
+		Shader* m_Shader;
+		Texture* m_Albedo;
 	};
 }
 

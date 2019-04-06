@@ -3,6 +3,9 @@
 
 //TEMP
 #include "Player.h"
+#include "Camera.h"
+#include "Shader.h"
+#include <glm/gtx/transform.hpp>
 
 #include <iostream>
 
@@ -35,14 +38,22 @@ void Game::Start()
 
 	SetupResources();
 
-	//Temp
-	Engine::Player m_Player(m_ResourceManager);
+	//Temp---------------------------------------------
+	Engine::Player player(m_ResourceManager);
+	Engine::Camera camera(glm::vec3(0.f, 0.f, 5.0f));
+	Engine::Shader* shader = m_ResourceManager.GetResource<Engine::Shader>("DefaultShader");;
+	camera.AttachTo(&player);
+	//T------------------------------------------------
 
 	while (!window.IsCloseRequested())
 	{
 		window.Clear();
-
-		m_Player.Render();
+		camera.Update();
+		player.Update();
+		shader->SetMat4("view", camera.GetViewMatrix());
+		shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
+		camera.GetViewMatrix();
+		player.Render();
 
 		window.SwapAndPoll();
 	}

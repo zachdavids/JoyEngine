@@ -16,8 +16,8 @@ namespace Engine
 		void Render() const;
 	private:
 		//TODO REPLACE WITH SOME SORT OF MODEL COMPONENT
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<Model> m_Model;
+		Shader* m_Shader;
+		Model* m_Model;
 	};
 }
 
