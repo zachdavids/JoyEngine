@@ -8,12 +8,12 @@ namespace Engine
 	{
 		// World position
 		glm::vec3 m_Position = glm::vec3(0.f);
-		// World rotation
+		// World rotation (pitch, yaw, roll)
 		glm::vec3 m_Rotation = glm::vec3(0.f);
 
 		// Local position
 		glm::vec3 m_LocalPosition = glm::vec3(0.f);
-		// Local rotation
+		// Local rotation (pitch, yaw, roll)
 		glm::vec3 m_LocalRotation = glm::vec3(0.f);
 		// Local rotation
 		glm::vec3 m_LocalScale = glm::vec3(1.f, 1.f, 1.f);

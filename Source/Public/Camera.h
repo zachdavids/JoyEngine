@@ -8,7 +8,7 @@ namespace Engine
 	class Camera : public GameObject
 	{
 	public:
-		Camera(glm::vec3 position);
+		Camera(glm::vec3 local_position);
 		void Update();
 		glm::mat4 const& GetViewMatrix() const { return m_ViewMatrix; }
 	private:

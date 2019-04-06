@@ -39,11 +39,11 @@ void Game::Start()
 	SetupResources();
 
 	//Temp---------------------------------------------
-	Engine::Player player(m_ResourceManager);
-	Engine::Camera camera(glm::vec3(0.f, 0.f, 5.0f));
+	Engine::Player player(m_ResourceManager, glm::vec3(0.f,0.f,0.f));
+	Engine::Camera camera(glm::vec3(0.f, 0.f, 5.f));
 	Engine::Shader* shader = m_ResourceManager.GetResource<Engine::Shader>("DefaultShader");;
 	camera.AttachTo(&player);
-	//T------------------------------------------------
+	//-------------------------------------------------
 
 	while (!window.IsCloseRequested())
 	{
