@@ -13,12 +13,10 @@ namespace Engine
 		virtual void Update();
 		void AddChild(GameObject* child);
 		void AttachTo(GameObject* parent);
-		GameObject* m_Parent = nullptr;
-		Transform m_Transform; 
+		Transform m_Transform;
 	protected:
 		int m_ID;
-
-
+		GameObject* m_Parent = nullptr;
 		std::vector<GameObject*> m_Children;
 	};
 }

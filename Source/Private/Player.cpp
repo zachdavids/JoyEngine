@@ -15,9 +15,10 @@ Engine::Player::Player(ResourceManager const& resource_manager, glm::vec3 positi
 
 void Engine::Player::Update()
 {
-	GameObject::Update();
 	m_Transform.SetLocalPosition(glm::vec3(0.f, 0.f, (float)glfwGetTime() * -1.5));
 	m_Transform.SetLocalRotation(glm::quat(glm::vec3(0.f, (float)glfwGetTime() * glm::radians(25.0f), 0.f)));
+
+	GameObject::Update();
 }
 
 //TODO temporary
@@ -33,7 +34,6 @@ void Engine::Player::Render() const
 	m_Shader->Use();
 	m_Shader->SetMat4("model", model);
 	//---------------------------------------------------------------------------
-
 
 	for (int i = 0; i != m_Model->GetMeshes().size(); ++i)
 	{

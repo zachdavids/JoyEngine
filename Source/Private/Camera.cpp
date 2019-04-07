@@ -1,14 +1,12 @@
 #include "Camera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
-#include <GLFW/glfw3.h>
 
-//TODO	ADD 3RD PERSON CAMERA 
+//TODO ADD 3RD PERSON CAMERA 
 
-Engine::Camera::Camera(glm::vec3 local_position)
+Engine::Camera::Camera(glm::vec3 const& position)
 {
-	m_Transform.SetLocalPosition(local_position);
+	m_Transform.SetLocalPosition(position);
 	CalculateViewMatrix();
 }
 
@@ -25,18 +23,10 @@ void Engine::Camera::Update()
 		m_Transform.SetPosition(m_Transform.GetLocalPosition());
 		m_Transform.SetRotation(m_Transform.GetLocalRotation());
 	}
-
-	CalculateVectors();
 	CalculateViewMatrix();
 }
 
 void Engine::Camera::CalculateViewMatrix()
 {
-	//TODO review use up vector, does it belong in transform? or camera member variable?
 	m_ViewMatrix = glm::translate(glm::mat4_cast(m_Transform.GetRotation()), -m_Transform.GetPosition());
-}
-
-void Engine::Camera::CalculateVectors()
-{
-
 }

@@ -26,7 +26,7 @@ void Engine::Shader::Use() const
 	glUseProgram(m_ID);
 }
 
-void Engine::Shader::SetMat4(std::string const& name, glm::mat4 value) const
+void Engine::Shader::SetMat4(std::string const& name, glm::mat4 const& value) const
 {
 	glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
