@@ -48,12 +48,12 @@ void Game::Start()
 	while (!window.IsCloseRequested())
 	{
 		window.Clear();
-		camera.Update();
-		player.Update();
 		shader->SetMat4("view", camera.GetViewMatrix());
 		shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
 		camera.GetViewMatrix();
 		player.Render();
+		camera.Update();
+		player.Update();
 
 		window.SwapAndPoll();
 	}
