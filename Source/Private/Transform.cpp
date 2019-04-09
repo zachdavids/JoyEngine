@@ -13,15 +13,17 @@ void Engine::Transform::Translate(glm::vec3 const& translation, Space space)
 	}
 }
 
-void Engine::Transform::Rotate(glm::vec3 const& rotation, Space space)
+void Engine::Transform::Rotate(glm::quat const&  rotation, Space space)
 {
 	switch (space)
 	{
 	case Space::kLocal:
-		m_LocalRotation *= glm::quat(rotation);
+		m_LocalRotation *= rotation;
+		m_LocalRotation = glm::normalize(m_LocalRotation);
 		break;
 	case Space::kWorld:
-		m_Rotation *= glm::quat(rotation);
+		m_Rotation *= rotation;
+		m_Rotation = glm::normalize(m_Rotation);
 		break;
 	}
 }

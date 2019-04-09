@@ -1,19 +1,15 @@
 #pragma once
 
-#include "Shader.h"
-#include "Texture.h"
+#include <glm/vec3.hpp>
 
 namespace Engine
 {
-	class Material
+	struct Material
 	{
-	public:
-		Material() = default; 
-	private:
-		float m_Metallic{ 0.f };
-		float m_Smoothness{ 0.f };
-		Shader* m_Shader;
-		Texture* m_Albedo;
+		float m_Shininess;
+		glm::vec3 m_Ambient;
+		glm::vec3 m_Diffuse;
+		glm::vec3 m_Specular;
 	};
 }
 

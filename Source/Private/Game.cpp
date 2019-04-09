@@ -5,7 +5,10 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Shader.h"
+#include "Light.h"
 #include <glm/gtx/transform.hpp>
+#include "stb_image.h"
+#include "GLFW/glfw3.h"
 
 #include <iostream>
 
@@ -40,9 +43,10 @@ void Game::Start()
 
 	//Temp---------------------------------------------
 	Engine::Player player(m_ResourceManager, glm::vec3(0.f,0.f,0.f));
-	Engine::Camera camera(glm::vec3(0.f, 0.f, 5.f));
+	Engine::Player player2(m_ResourceManager, glm::vec3(0.f, 0.f, 0.f));
+	Engine::Camera camera(glm::vec3(0.f, 0.f, 3.f));
 	Engine::Shader* shader = m_ResourceManager.GetResource<Engine::Shader>("DefaultShader");;
-	camera.AttachTo(&player);
+	//camera.AttachTo(&player);
 	//-------------------------------------------------
 
 	while (!window.IsCloseRequested())
@@ -52,13 +56,24 @@ void Game::Start()
 		//Inputs
 
 		//Updates
+		glm::vec3 light = glm::vec3(0.f);
+		light.x = 2.0f * sin(glfwGetTime());
+		light.y = -0.3f;
+		light.z = 1.5f * cos(glfwGetTime());
 		player.Update();
+		player2.m_Transform.SetLocalPosition(light);
+		player2.Update();
 		camera.Update();
 
+		shader->Use();
 		//Renders
 		shader->SetMat4("view", camera.GetViewMatrix());
 		shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
+		shader->SetVec3("light_position", light);
+		shader->SetVec3("view_position", camera.m_Transform.GetPosition());
 		player.Render();
+		player2.Render();
+
 
 		window.SwapAndPoll();
 	}

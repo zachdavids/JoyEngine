@@ -13,7 +13,8 @@ Engine::Model::Model(std::string const& path) : Resource(m_Directory + path)
 void Engine::Model::Create()
 {
 	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(m_Path, aiProcessPreset_TargetRealtime_MaxQuality);
+	import.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
+	const aiScene* scene = import.ReadFile(m_Path, aiProcess_RemoveComponent | aiProcess_FixInfacingNormals | aiProcess_TransformUVCoords | aiProcessPreset_TargetRealtime_MaxQuality);
 	ProcessNode(scene->mRootNode, scene);
 
 	for (int i = 0; i != m_Meshes.size(); i++)
@@ -54,12 +55,12 @@ std::vector<Engine::Vertex> Engine::Model::CreateVertices(aiMesh* mesh) const
 		vertex.m_Position.y = mesh->mVertices[i].y;
 		vertex.m_Position.z = -mesh->mVertices[i].z;
 
+		vertex.m_UV.x = mesh->mTextureCoords[0][i].x;
+		vertex.m_UV.y = mesh->mTextureCoords[0][i].y;
+
 		vertex.m_Normal.x = mesh->mNormals[i].x;
 		vertex.m_Normal.y = mesh->mNormals[i].y;
 		vertex.m_Normal.z = mesh->mNormals[i].z;
-
-		vertex.m_UV.x = mesh->mTextureCoords[0][i].x;
-		vertex.m_UV.y = mesh->mTextureCoords[0][i].y;
 
 		vertex.m_Tangent.x = mesh->mTangents[i].x;
 		vertex.m_Tangent.y = mesh->mTangents[i].y;

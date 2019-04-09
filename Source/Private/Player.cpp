@@ -11,12 +11,13 @@ Engine::Player::Player(ResourceManager const& resource_manager, glm::vec3 positi
 	m_Model(resource_manager.GetResource<Model>("Arwing"))
 {
 	m_Transform.SetLocalPosition(position);
+	m_Transform.SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 }
 
 void Engine::Player::Update()
 {
-	m_Transform.SetLocalPosition(glm::vec3(0.f, 0.f, (float)glfwGetTime() * -1.5));
-	m_Transform.SetLocalRotation(glm::quat(glm::vec3(0.f, (float)glfwGetTime() * glm::radians(25.0f), 0.f)));
+	//m_Transform.SetLocalPosition(glm::vec3(0.f, 0.f, (float)glfwGetTime() * -1.5));
+	//m_Transform.SetLocalRotation(glm::angleAxis(glm::radians(-55.f), glm::vec3(1.f, 0.f, 0.f)));
 
 	GameObject::Update();
 }

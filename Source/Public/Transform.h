@@ -23,10 +23,11 @@ namespace Engine
 		glm::quat const& GetRotation() const { return m_Rotation; }
 		void SetLocalPosition(glm::vec3 const& position) { m_LocalPosition = position; }
 		void SetLocalRotation(glm::quat const& rotation) { m_LocalRotation = rotation; }
+		void SetLocalScale(glm::vec3 const& scale) { m_LocalScale = scale; }
 		void SetPosition(glm::vec3 const& position) { m_Position = position; }
 		void SetRotation(glm::quat const& rotation) { m_Rotation = rotation; }
 		void Translate(glm::vec3 const& translation, Space space);
-		void Rotate(glm::vec3 const& rotation, Space space);
+		void Rotate(glm::quat const& rotation, Space space);
 	private:
 		// Represents the rotation in world space
 		glm::quat m_Rotation = glm::vec3(0.f);

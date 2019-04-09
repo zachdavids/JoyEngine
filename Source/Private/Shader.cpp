@@ -26,9 +26,26 @@ void Engine::Shader::Use() const
 	glUseProgram(m_ID);
 }
 
+void Engine::Shader::SetFloat(std::string const& name, float value) const
+{
+	glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value);
+}
+
+void Engine::Shader::SetVec3(std::string const& name, glm::vec3 const& value) const
+{
+	glUniform3fv(glGetUniformLocation(m_ID, name.c_str()), 1, glm::value_ptr(value));
+}
+
 void Engine::Shader::SetMat4(std::string const& name, glm::mat4 const& value) const
 {
 	glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void Engine::Shader::SetLight(Light const& light)
+{
+	SetFloat("light.intensity", light.m_Intensity);
+	SetVec3("light_position", light.m_Position);
+	SetVec3("light.color", light.m_Color);
 }
 
 int Engine::Shader::LoadShader(std::string const& path, GLuint type) const
