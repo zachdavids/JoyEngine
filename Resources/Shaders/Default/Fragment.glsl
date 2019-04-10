@@ -40,4 +40,5 @@ void main(void)
 
 	vec4 result = vec4(ambient + diffuse + specular, 1.0);
 	out_color = result * texture(sampler, i.uv);
+	//out_color = vec4(i.normal, 1.0f);
 }

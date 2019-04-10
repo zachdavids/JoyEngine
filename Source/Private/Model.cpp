@@ -53,7 +53,7 @@ std::vector<Engine::Vertex> Engine::Model::CreateVertices(aiMesh* mesh) const
 		Vertex vertex;
 		vertex.m_Position.x = mesh->mVertices[i].x;
 		vertex.m_Position.y = mesh->mVertices[i].y;
-		vertex.m_Position.z = -mesh->mVertices[i].z;
+		vertex.m_Position.z = mesh->mVertices[i].z;
 
 		vertex.m_UV.x = mesh->mTextureCoords[0][i].x;
 		vertex.m_UV.y = mesh->mTextureCoords[0][i].y;
