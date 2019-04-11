@@ -4,10 +4,18 @@ layout(location = 0) out vec4 out_color;
 
 struct Light
 {
-	float intensity;
-	vec3 position;
-    vec3 color;
+	vec3 position;  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
 };
+
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+}; 
 
 in VertexData
 {
@@ -18,6 +26,8 @@ in VertexData
 
 uniform vec3 light_position;
 uniform vec3 view_position;
+uniform Light light;
+uniform Material material;
 uniform sampler2D sampler;
 
 void main(void)
@@ -26,19 +36,18 @@ void main(void)
 
 	//Ambient
 	float ambient_strength = 0.1f;
-	vec3 ambient = ambient_strength * vec3(1.0, 1.0, 1.0);
+	vec3 ambient = light.ambient * material.ambient;
 
 	//Diffuse
-	vec3 light_direction = normalize(light_position - i.position);
+	vec3 light_direction = normalize(light.position - i.position);
 	float diffuse_strength = max(dot(normal, light_direction), 0.0);
-	vec3 diffuse = diffuse_strength * vec3(1.0, 1.0, 1.0);
+	vec3 diffuse = light.diffuse * diffuse_strength * material.diffuse;
 
 	vec3 view_direction = normalize(view_position - i.position);
 	vec3 reflection_direction = reflect(-light_direction, normal);
-	float specular_strength = 0.5 * pow(max(dot(view_direction, reflection_direction), 0.0), 32);
-	vec3 specular = specular_strength * vec3(1.0, 1.0, 1.0);
+	float specular_strength = 0.5 * pow(max(dot(view_direction, reflection_direction), 0.0), material.shininess);
+	vec3 specular = light.specular * specular_strength * material.specular;
 
-	vec4 result = vec4(ambient + diffuse + specular, 1.0);
-	out_color = result * texture(sampler, i.uv);
-	//out_color = vec4(i.normal, 1.0f);
+	vec3 result = ambient + diffuse + specular;
+	out_color = vec4(result, 1.0f) * texture(sampler, i.uv);
 }

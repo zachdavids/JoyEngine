@@ -67,9 +67,18 @@ void Game::Start()
 
 		shader->Use();
 		//Renders
+		shader->SetVec3("light.position", glm::vec3(light));
+		shader->SetVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		shader->SetVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f)); // darken the light a bit to fit the scene
+		shader->SetVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+		shader->SetVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+		shader->SetVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+		shader->SetVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+
+		shader->SetFloat("material.shininess", 32.0f);
 		shader->SetMat4("view", camera.GetViewMatrix());
 		shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
-		shader->SetVec3("light_position", light);
 		shader->SetVec3("view_position", camera.m_Transform.GetPosition());
 		player.Render();
 		player2.Render();
