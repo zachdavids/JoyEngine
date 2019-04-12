@@ -67,10 +67,10 @@ void Game::Start()
 
 		shader->Use();
 		//Renders
-		shader->SetVec3("light.position", glm::vec3(light));
-		shader->SetVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-		shader->SetVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f)); // darken the light a bit to fit the scene
-		shader->SetVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader->SetVec3("directional_light.direction", glm::vec3(light));
+		shader->SetVec3("directional_light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		shader->SetVec3("directional_light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f)); // darken the light a bit to fit the scene
+		shader->SetVec3("directional_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
 		shader->SetVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
 		shader->SetVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
