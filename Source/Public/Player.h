@@ -16,7 +16,6 @@ namespace Engine
 		void Render() const;
 	private:
 		//TODO REPLACE WITH SOME SORT OF MODEL COMPONENT
-
 		Shader* m_Shader;
 		Model* m_Model;
 	};

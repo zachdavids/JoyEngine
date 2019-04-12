@@ -102,6 +102,10 @@ void main(void)
 {
 	vec3 normal = normalize(i.normal);
 	vec3 view_direction = normalize(view_position - i.position);
-
-	out_color = vec4(CalculateDirectionalLight(directional_light, normal, view_direction), 1.0f) * texture(sampler, i.uv); 
+	vec4 texture_color = texture(sampler, i.uv);
+	if (texture_color.a < 0.1)
+	{
+		discard;
+	}
+	out_color = vec4(CalculateDirectionalLight(directional_light, normal, view_direction), 1.0f) * texture_color; 
 }

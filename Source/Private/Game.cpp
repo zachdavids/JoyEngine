@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Light.h"
+#include "Skybox.h"
 #include <glm/gtx/transform.hpp>
 #include "stb_image.h"
 #include "GLFW/glfw3.h"
@@ -28,9 +29,21 @@ void Game::SetupResources()
 	);
 
 	m_ResourceManager.AddResource(
+		Engine::ResourceManager::Type::kShader,
+		"SkyboxShader",
+		"Skybox/"
+	);
+
+	m_ResourceManager.AddResource(
 		Engine::ResourceManager::Type::kModel,
 		"Arwing",
 		"Arwing/Arwing.obj"
+	);
+
+	m_ResourceManager.AddResource(
+		Engine::ResourceManager::Type::kModel,
+		"Skybox",
+		"Debug/Skybox.obj"
 	);
 }
 
@@ -45,8 +58,11 @@ void Game::Start()
 	Engine::Player player(m_ResourceManager, glm::vec3(0.f,0.f,0.f));
 	Engine::Player player2(m_ResourceManager, glm::vec3(0.f, 0.f, 0.f));
 	Engine::Camera camera(glm::vec3(0.f, 0.f, 3.f));
-	Engine::Shader* shader = m_ResourceManager.GetResource<Engine::Shader>("DefaultShader");;
+	Engine::Shader* shader;
 	//camera.AttachTo(&player);
+
+	Engine::Skybox skybox(m_ResourceManager);
+	skybox.Create();
 	//-------------------------------------------------
 
 	while (!window.IsCloseRequested())
@@ -65,6 +81,15 @@ void Game::Start()
 		player2.Update();
 		camera.Update();
 
+		//Skybox
+		shader = m_ResourceManager.GetResource<Engine::Shader>("SkyboxShader");
+		shader->Use();
+		shader->SetMat4("view", camera.GetViewMatrix());
+		shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
+		skybox.Render();
+
+		//GameObjects
+		shader = m_ResourceManager.GetResource<Engine::Shader>("DefaultShader");
 		shader->Use();
 		//Renders
 		shader->SetVec3("directional_light.direction", glm::vec3(light));
@@ -82,6 +107,7 @@ void Game::Start()
 		shader->SetVec3("view_position", camera.m_Transform.GetPosition());
 		player.Render();
 		player2.Render();
+
 
 
 		window.SwapAndPoll();

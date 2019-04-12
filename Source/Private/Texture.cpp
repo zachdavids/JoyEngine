@@ -11,12 +11,11 @@ Engine::Texture::Texture(std::string const& path, Type type) :
 
 void Engine::Texture::Create()
 {
-	glGenTextures(1, &m_ID);
+	stbi_set_flip_vertically_on_load(true);
 
 	int width;
 	int height; 
 	int components;
-	stbi_set_flip_vertically_on_load(true);  
 	unsigned char *data = stbi_load(m_Path.c_str(), &width, &height, &components, 0);
 
 	GLenum format;
@@ -33,6 +32,7 @@ void Engine::Texture::Create()
 		format = GL_RGBA;
 	}
 
+	glGenTextures(1, &m_ID);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
 	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);

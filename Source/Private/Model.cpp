@@ -51,25 +51,34 @@ std::vector<Engine::Vertex> Engine::Model::CreateVertices(aiMesh* mesh) const
 	for (unsigned int i = 0; i != mesh->mNumVertices; ++i)
 	{
 		Vertex vertex;
+
 		vertex.m_Position.x = mesh->mVertices[i].x;
 		vertex.m_Position.y = mesh->mVertices[i].y;
 		vertex.m_Position.z = mesh->mVertices[i].z;
 
-		vertex.m_UV.x = mesh->mTextureCoords[0][i].x;
-		vertex.m_UV.y = mesh->mTextureCoords[0][i].y;
+		if (mesh->HasTextureCoords(0))
+		{
+			vertex.m_UV.x = mesh->mTextureCoords[0][i].x;
+			vertex.m_UV.y = mesh->mTextureCoords[0][i].y;
+		}
 
-		vertex.m_Normal.x = mesh->mNormals[i].x;
-		vertex.m_Normal.y = mesh->mNormals[i].y;
-		vertex.m_Normal.z = mesh->mNormals[i].z;
+		if (mesh->HasNormals())
+		{
+			vertex.m_Normal.x = mesh->mNormals[i].x;
+			vertex.m_Normal.y = mesh->mNormals[i].y;
+			vertex.m_Normal.z = mesh->mNormals[i].z;
+		}
 
-		vertex.m_Tangent.x = mesh->mTangents[i].x;
-		vertex.m_Tangent.y = mesh->mTangents[i].y;
-		vertex.m_Tangent.z = mesh->mTangents[i].z;
+		if (mesh->HasTangentsAndBitangents())
+		{
+			vertex.m_Tangent.x = mesh->mTangents[i].x;
+			vertex.m_Tangent.y = mesh->mTangents[i].y;
+			vertex.m_Tangent.z = mesh->mTangents[i].z;
 
-		vertex.m_Bitangent.x = mesh->mBitangents[i].x;
-		vertex.m_Bitangent.y = mesh->mBitangents[i].y;
-		vertex.m_Bitangent.z = mesh->mBitangents[i].z;
-
+			vertex.m_Bitangent.x = mesh->mBitangents[i].x;
+			vertex.m_Bitangent.y = mesh->mBitangents[i].y;
+			vertex.m_Bitangent.z = mesh->mBitangents[i].z;
+		}
 		vertices.push_back(vertex);
 	}
 	return vertices;
