@@ -7,8 +7,8 @@
 
 
 Engine::Player::Player(ResourceManager const& resource_manager, glm::vec3 position) :
-	m_Shader(resource_manager.GetResource<Shader>("DefaultShader")),
-	m_Model(resource_manager.GetResource<Model>("Arwing"))
+	m_Shader(resource_manager.GetResource<Shader>("PBRShader")),
+	m_Model(resource_manager.GetResource<Model>("Sphere"))
 {
 	m_Transform.SetLocalPosition(position);
 	m_Transform.SetLocalScale(glm::vec3(0.5, 0.5, 0.5));

@@ -49,9 +49,9 @@ void Engine::Skybox::Create()
 void Engine::Skybox::Render()
 {
 	m_Shader->Use();
-	glDepthMask(GL_FALSE);
+	glDepthFunc(GL_LEQUAL);
 	glBindVertexArray(m_Model->GetMeshes()[0].GetVAO());
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID);
 	glDrawElements(GL_TRIANGLES, m_Model->GetMeshes()[0].GetSize(), GL_UNSIGNED_INT, 0);
-	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LESS);
 }
