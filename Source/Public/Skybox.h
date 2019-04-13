@@ -17,8 +17,12 @@ namespace Engine
 		void Render();
 	private:
 		unsigned int m_ID;
+		unsigned int m_CubeMap;
+		static const std::string m_Directory;
 		Shader* m_Shader;
-		Model* m_Model;
+		Shader* m_ConversionShader;
+		Model* m_SkyboxModel;
+		void GenerateCubemap();
 	};
 }
 

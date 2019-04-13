@@ -36,6 +36,12 @@ void Game::SetupResources()
 
 	m_ResourceManager.AddResource(
 		Engine::ResourceManager::Type::kShader,
+		"SkyboxConversionShader",
+		"SkyboxConversion/"
+	);
+
+	m_ResourceManager.AddResource(
+		Engine::ResourceManager::Type::kShader,
 		"PBRShader",
 		"PBR/"
 	);
@@ -48,7 +54,7 @@ void Game::SetupResources()
 
 	m_ResourceManager.AddResource(
 		Engine::ResourceManager::Type::kModel,
-		"Skybox",
+		"SkyboxCube",
 		"Debug/Skybox.obj"
 	);
 
@@ -83,6 +89,11 @@ void Game::Start()
 	skybox.Create();
 	//-------------------------------------------------
 
+	//Reset after framebuffer
+	int window_width;
+	int window_height;
+	glfwGetFramebufferSize(window.GetWindow(), &window_width, &window_height);
+	glViewport(0, 0, window_width, window_height);
 	while (!window.IsCloseRequested())
 	{
 		window.Clear();
@@ -98,15 +109,6 @@ void Game::Start()
 		player2.m_Transform.SetLocalPosition(light);
 		player2.Update();
 		camera.Update();
-
-		//Renders
-		//GameObjects
-		//shader = m_ResourceManager.GetResource<Engine::Shader>("DefaultShader");
-		//shader->Use();
-		//shader->SetVec3("directional_light.direction", glm::vec3(light));
-		//shader->SetVec3("directional_light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-		//shader->SetVec3("directional_light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f)); // darken the light a bit to fit the scene
-		//shader->SetVec3("directional_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
 		shader = m_ResourceManager.GetResource<Engine::Shader>("PBRShader");
 		shader->Use();

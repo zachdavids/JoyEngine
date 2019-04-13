@@ -26,6 +26,11 @@ void Engine::Shader::Use() const
 	glUseProgram(m_ID);
 }
 
+void Engine::Shader::SetInt(std::string const& name, int value) const
+{
+	glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
+}
+
 void Engine::Shader::SetFloat(std::string const& name, float value) const
 {
 	glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value);

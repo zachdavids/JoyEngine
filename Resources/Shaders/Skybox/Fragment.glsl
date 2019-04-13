@@ -4,12 +4,15 @@ layout(location = 0) out vec4 out_color;
 
 in VertexData
 {
-	vec3 uv;
+	vec3 position;
 } i;
 
 uniform samplerCube sampler;
 
 void main(void)
 {
-	out_color = texture(sampler, i.uv);
+	vec3 color = texture(sampler, i.position).rgb;
+	color = color / (color + vec3(1.0));
+	color = pow(color, vec3(1.0 / 2.2));	
+	out_color = vec4(color, 1.0f);
 }
