@@ -7,15 +7,16 @@ namespace Engine
 	class WindowManager
 	{
 	public:
-		explicit WindowManager() = default;
+		WindowManager() = default;
 		bool Create();
 		void Clear() const;
 		void SwapAndPoll() const;
 		bool IsCloseRequested() const;
 		void Destroy();
+		static WindowManager* Get() { return m_Instance; }
 		GLFWwindow* GetWindow() const { return m_Window; }
 	private:
-		//TODO: Replace with smart pointer
+		static WindowManager* m_Instance;
 		GLFWwindow* m_Window = nullptr;
 	};
 }

@@ -1,14 +1,14 @@
 #include "Player.h"
 
+#include "ResourceManager.h"
+
 #include <GLFW/glfw3.h>
 #include <glm/mat4x4.hpp>
 #include <glm/gtx/transform.hpp>
-#include <iostream>
 
-
-Engine::Player::Player(ResourceManager const& resource_manager, glm::vec3 position) :
-	m_Shader(resource_manager.GetResource<Shader>("PBRShader")),
-	m_Model(resource_manager.GetResource<Model>("Sphere"))
+Engine::Player::Player(glm::vec3 position) :
+	m_Shader(ResourceManager::Get()->GetResource<Shader>("PBRShader")),
+	m_Model(ResourceManager::Get()->GetResource<Model>("Sphere"))
 {
 	m_Transform.SetLocalPosition(position);
 	m_Transform.SetLocalScale(glm::vec3(0.5, 0.5, 0.5));

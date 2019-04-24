@@ -20,91 +20,14 @@ int main()
 	return 0;
 }
 
-void Game::SetupResources()
-{
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kShader,
-		"DefaultShader",
-		"Default/"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kShader,
-		"SkyboxShader",
-		"Skybox/Skybox/"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kShader,
-		"SkyboxConversionShader",
-		"Skybox/Conversion/"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kShader,
-		"SkyboxIrradianceShader",
-		"Skybox/Irradiance/"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kShader,
-		"SkyboxPrefilterShader",
-		"Skybox/Prefilter/"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kShader,
-		"SkyboxBRDFShader",
-		"Skybox/BRDF/"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kShader,
-		"PBRShader",
-		"PBRTesselation/"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kModel,
-		"Arwing",
-		"Arwing/Arwing.obj"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kModel,
-		"SkyboxCube",
-		"Debug/Skybox.obj"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kModel,
-		"Cube",
-		"Debug/Cube.obj"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kModel,
-		"Quad",
-		"Debug/Quad.obj"
-	);
-
-	m_ResourceManager.AddResource(
-		Engine::ResourceManager::Type::kModel,
-		"Sphere",
-		"Debug/Sphere.obj"
-	);
-}
-
 void Game::Start()
 {
-	Engine::WindowManager window;
-	window.Create();
-
-	SetupResources();
+	m_WindowManager.Create();
+	m_ResourceManager.Create();
 
 	//Temp---------------------------------------------
-	Engine::Player player(m_ResourceManager, glm::vec3(0.f,0.f,0.f));
-	Engine::Player player2(m_ResourceManager, glm::vec3(0.f, 0.f, 0.f));
+	Engine::Player player(glm::vec3(0.f,0.f,0.f));
+	Engine::Player player2(glm::vec3(0.f, 0.f, 0.f));
 	Engine::Camera camera(glm::vec3(0.f, 0.f, 3.f));
 	Engine::Shader* shader;
 	//camera.AttachTo(&player);
@@ -113,7 +36,7 @@ void Game::Start()
 	skybox.Create();
 
 	//-------------------------------------------------
-	shader = m_ResourceManager.GetResource<Engine::Shader>("PBRShader");
+	shader = Engine::ResourceManager::Get()->GetResource<Engine::Shader>("PBRShader");
 	shader->Use();
 	shader->SetInt("irradiance", 0);
 	shader->SetInt("prefilter", 1);
@@ -125,7 +48,7 @@ void Game::Start()
 	shader->SetInt("ao", 7);
 	shader->SetInt("height", 8);
 
-	shader = m_ResourceManager.GetResource<Engine::Shader>("SkyboxShader");
+	shader = Engine::ResourceManager::Get()->GetResource<Engine::Shader>("SkyboxShader");
 	shader->Use();
 	shader->SetInt("skybox", 0);
 
@@ -156,7 +79,7 @@ void Game::Start()
 	};
 
 	//----------------------------------------------------------------------------------------------------------
-	shader = m_ResourceManager.GetResource<Engine::Shader>("PBRShader");
+	shader = Engine::ResourceManager::Get()->GetResource<Engine::Shader>("PBRShader");
 	shader->Use();
 	shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
 	//----------------------------------------------------------------------------------------------------------
@@ -164,11 +87,11 @@ void Game::Start()
 	//Reset after framebuffer
 	int window_width;
 	int window_height;
-	glfwGetFramebufferSize(window.GetWindow(), &window_width, &window_height);
+	glfwGetFramebufferSize(Engine::WindowManager::Get()->GetWindow(), &window_width, &window_height);
 	glViewport(0, 0, window_width, window_height);
-	while (!window.IsCloseRequested())
+	while (!Engine::WindowManager::Get()->IsCloseRequested())
 	{
-		window.Clear();
+		Engine::WindowManager::Get()->Clear();
 
 		//Inputs
 
@@ -182,7 +105,7 @@ void Game::Start()
 		player2.Update();
 		camera.Update();
 
-		shader = m_ResourceManager.GetResource<Engine::Shader>("PBRShader");
+		shader = Engine::ResourceManager::Get()->GetResource<Engine::Shader>("PBRShader");
 		shader->Use();
 		shader->SetVec3("camera_position", camera.m_Transform.GetPosition());
 		shader->SetMat4("view", camera.GetViewMatrix());
@@ -216,22 +139,24 @@ void Game::Start()
 		{
 			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
 			newPos = lightPositions[i];
-			m_ResourceManager.GetResource<Engine::Shader>("PBRShader")->SetVec3("lightPositions[" + std::to_string(i) + "]", newPos);
-			m_ResourceManager.GetResource<Engine::Shader>("PBRShader")->SetVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+			Engine::ResourceManager::Get()->GetResource<Engine::Shader>("PBRShader")->
+				SetVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+			Engine::ResourceManager::Get()->GetResource<Engine::Shader>("PBRShader")->
+				SetVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
 		}
 
 		//Skybox
-		shader = m_ResourceManager.GetResource<Engine::Shader>("SkyboxShader");
+		shader = Engine::ResourceManager::Get()->GetResource<Engine::Shader>("SkyboxShader");
 		shader->Use();
 		shader->SetMat4("view", glm::mat4(glm::mat3(camera.GetViewMatrix())));
 		shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.GetCubeMap());
-		glBindVertexArray(m_ResourceManager.GetResource<Engine::Model>("SkyboxCube")->GetMeshes()[0].GetVAO());
-		glDrawElements(GL_TRIANGLES, m_ResourceManager.GetResource<Engine::Model>("SkyboxCube")->GetMeshes()[0].GetSize(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(Engine::ResourceManager::Get()->GetResource<Engine::Model>("SkyboxCube")->GetMeshes()[0].GetVAO());
+		glDrawElements(GL_TRIANGLES, Engine::ResourceManager::Get()->GetResource<Engine::Model>("SkyboxCube")->GetMeshes()[0].GetSize(), GL_UNSIGNED_INT, 0);
 
-		window.SwapAndPoll();
+		Engine::WindowManager::Get()->SwapAndPoll();
 	}
 
-	window.Destroy();
+	Engine::WindowManager::Get()->Destroy();
 }

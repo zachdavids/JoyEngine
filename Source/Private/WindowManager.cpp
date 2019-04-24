@@ -3,10 +3,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-//TODO: Add Lua config file for Window setting
+//TODO: Add JSON config file for Window setting
+
+Engine::WindowManager* Engine::WindowManager::m_Instance;
 
 bool Engine::WindowManager::Create()
 {
+	if (m_Instance) { return false; }
+	m_Instance = this;
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
