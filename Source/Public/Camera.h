@@ -16,4 +16,3 @@ namespace Engine
 		void CalculateViewMatrix();
 	};
 }
-

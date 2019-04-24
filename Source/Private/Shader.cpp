@@ -4,21 +4,23 @@
 #include <iostream>
 #include <vector>
 #include <glm/gtc/type_ptr.hpp>
+#include <filesystem>
 
 const std::string Engine::Shader::m_Directory = "Resources/Shaders/";
 
-Engine::Shader::Shader(std::string const& path) : Resource(m_Directory + path)
+Engine::Shader::Shader(std::string const& path) : 
+	Resource(m_Directory + path)
 {
 }
 
 void Engine::Shader::Create()
 {
-	const std::string vertex = "Vertex.glsl";
-	const std::string fragment = "Fragment.glsl";
-
-	int vertex_id = LoadShader(m_Path + vertex, GL_VERTEX_SHADER);
-	int fragment_id = LoadShader(m_Path + fragment, GL_FRAGMENT_SHADER);
-	m_ID = Compile(vertex_id, fragment_id);
+	for (const auto& file : std::filesystem::directory_iterator(m_Path))
+	{
+		LoadShader(file.path().string());
+	}
+	
+	Compile();
 }
 
 void Engine::Shader::Use() const
@@ -46,47 +48,59 @@ void Engine::Shader::SetMat4(std::string const& name, glm::mat4 const& value) co
 	glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void Engine::Shader::SetLight(Light const& light)
-{
-	SetFloat("light.intensity", light.m_Intensity);
-	SetVec3("light_position", light.m_Position);
-	SetVec3("light.color", light.m_Color);
-}
-
-int Engine::Shader::LoadShader(std::string const& path, GLuint type) const
+void Engine::Shader::LoadShader(std::string const& path)
 {
 	std::string code;
 	Engine::Tools::ReadFile(&code, path);
+	const char* stage_code = code.c_str();
 
-	const char* vertex_code = code.c_str();
-	GLuint shader_id = glCreateShader(type);
-	glShaderSource(shader_id, 1, &vertex_code, NULL);
-	glCompileShader(shader_id);
+	GLuint stage_id;
+	if (path.find("Vertex") != std::string::npos)
+	{
+		stage_id = glCreateShader(GL_VERTEX_SHADER);
+	}
+	else if (path.find("Fragment") != std::string::npos)
+	{
+		stage_id = glCreateShader(GL_FRAGMENT_SHADER);
+	}
+	else if (path.find("TessEval") != std::string::npos)
+	{
+		stage_id = glCreateShader(GL_TESS_EVALUATION_SHADER);
+	}
+	else if (path.find("TessControl") != std::string::npos)
+	{
+		stage_id = glCreateShader(GL_TESS_CONTROL_SHADER);
+	}
+
+	glShaderSource(stage_id, 1, &stage_code, NULL);
+	glCompileShader(stage_id);
 
 	//TODO: Remove after release
 	GLint status;
-	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &status);
+	glGetShaderiv(stage_id, GL_COMPILE_STATUS, &status);
 	if (status != GL_TRUE)
 	{
 		GLint maxLength = 0;
-		glGetProgramiv(shader_id, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetProgramiv(stage_id, GL_INFO_LOG_LENGTH, &maxLength);
 		std::vector<GLchar> infoLog(maxLength);
-		glGetProgramInfoLog(shader_id, maxLength, &maxLength, &infoLog[0]);
+		glGetProgramInfoLog(stage_id, maxLength, &maxLength, &infoLog[0]);
 
 		for (unsigned int i = 0; i < infoLog.size(); i++)
 		{
 			std::cout << infoLog[i];
 		}
-		glDeleteProgram(shader_id);
+		glDeleteProgram(stage_id);
 	}
-	return shader_id;
+	m_ShaderStages.push_back(stage_id);
 }
 
-int Engine::Shader::Compile(GLuint vertex_id, GLuint fragment_id) const
+void Engine::Shader::Compile()
 {
 	GLuint program_id = glCreateProgram();
-	glAttachShader(program_id, vertex_id);
-	glAttachShader(program_id, fragment_id);
+	for (GLuint stage : m_ShaderStages)
+	{
+		glAttachShader(program_id, stage);
+	}
 	glLinkProgram(program_id);
 
 	GLint status;
@@ -104,5 +118,5 @@ int Engine::Shader::Compile(GLuint vertex_id, GLuint fragment_id) const
 		}
 		glDeleteProgram(program_id);
 	}
-	return program_id;
+	m_ID = program_id;
 }

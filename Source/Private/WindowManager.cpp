@@ -5,7 +5,7 @@
 
 //TODO: Add Lua config file for Window setting
 
-bool Engine::WindowManager::TryCreate()
+bool Engine::WindowManager::Create()
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -28,7 +28,9 @@ bool Engine::WindowManager::TryCreate()
 
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	//glEnable(GL_FRAMEBUFFER_SRGB);
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

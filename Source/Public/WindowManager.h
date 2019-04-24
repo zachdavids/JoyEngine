@@ -8,7 +8,7 @@ namespace Engine
 	{
 	public:
 		explicit WindowManager() = default;
-		bool TryCreate();
+		bool Create();
 		void Clear() const;
 		void SwapAndPoll() const;
 		bool IsCloseRequested() const;

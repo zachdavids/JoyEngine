@@ -17,7 +17,7 @@ Engine::Player::Player(ResourceManager const& resource_manager, glm::vec3 positi
 void Engine::Player::Update()
 {
 	//m_Transform.SetLocalPosition(glm::vec3(0.f, 0.f, (float)glfwGetTime() * -1.5));
-	//m_Transform.SetLocalRotation(glm::angleAxis(glm::radians(-55.f), glm::vec3(1.f, 0.f, 0.f)));
+	m_Transform.SetLocalRotation(glm::angleAxis(glm::radians((float)glfwGetTime() * 12), glm::vec3(0.f, 1.f, 0.f)));
 
 	GameObject::Update();
 }
@@ -43,6 +43,7 @@ void Engine::Player::Render() const
 			m_Model->GetTextures()[i][j].BindTexture(j);
 		}
 		glBindVertexArray(m_Model->GetMeshes()[i].GetVAO());
-		glDrawElements(GL_TRIANGLES, m_Model->GetMeshes()[i].GetSize(), GL_UNSIGNED_INT, 0);
+		glPatchParameteri(GL_PATCH_VERTICES, 3);
+		glDrawElements(GL_PATCHES, m_Model->GetMeshes()[i].GetSize(), GL_UNSIGNED_INT, 0);
 	}
 }

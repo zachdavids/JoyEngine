@@ -31,19 +31,37 @@ void Game::SetupResources()
 	m_ResourceManager.AddResource(
 		Engine::ResourceManager::Type::kShader,
 		"SkyboxShader",
-		"Skybox/"
+		"Skybox/Skybox/"
 	);
 
 	m_ResourceManager.AddResource(
 		Engine::ResourceManager::Type::kShader,
 		"SkyboxConversionShader",
-		"SkyboxConversion/"
+		"Skybox/Conversion/"
+	);
+
+	m_ResourceManager.AddResource(
+		Engine::ResourceManager::Type::kShader,
+		"SkyboxIrradianceShader",
+		"Skybox/Irradiance/"
+	);
+
+	m_ResourceManager.AddResource(
+		Engine::ResourceManager::Type::kShader,
+		"SkyboxPrefilterShader",
+		"Skybox/Prefilter/"
+	);
+
+	m_ResourceManager.AddResource(
+		Engine::ResourceManager::Type::kShader,
+		"SkyboxBRDFShader",
+		"Skybox/BRDF/"
 	);
 
 	m_ResourceManager.AddResource(
 		Engine::ResourceManager::Type::kShader,
 		"PBRShader",
-		"PBR/"
+		"PBRTesselation/"
 	);
 
 	m_ResourceManager.AddResource(
@@ -66,6 +84,12 @@ void Game::SetupResources()
 
 	m_ResourceManager.AddResource(
 		Engine::ResourceManager::Type::kModel,
+		"Quad",
+		"Debug/Quad.obj"
+	);
+
+	m_ResourceManager.AddResource(
+		Engine::ResourceManager::Type::kModel,
 		"Sphere",
 		"Debug/Sphere.obj"
 	);
@@ -74,7 +98,7 @@ void Game::SetupResources()
 void Game::Start()
 {
 	Engine::WindowManager window;
-	window.TryCreate();	//TODO: Error handling
+	window.Create();
 
 	SetupResources();
 
@@ -87,7 +111,55 @@ void Game::Start()
 
 	Engine::Skybox skybox(m_ResourceManager);
 	skybox.Create();
+
 	//-------------------------------------------------
+	shader = m_ResourceManager.GetResource<Engine::Shader>("PBRShader");
+	shader->Use();
+	shader->SetInt("irradiance", 0);
+	shader->SetInt("prefilter", 1);
+	shader->SetInt("brdf", 2);
+	shader->SetInt("albedo", 3);
+	shader->SetInt("normal", 4);
+	shader->SetInt("metallic", 5);
+	shader->SetInt("roughness", 6);
+	shader->SetInt("ao", 7);
+	shader->SetInt("height", 8);
+
+	shader = m_ResourceManager.GetResource<Engine::Shader>("SkyboxShader");
+	shader->Use();
+	shader->SetInt("skybox", 0);
+
+	Engine::Texture a("Resources/Textures/PBR/alb.png", Engine::Texture::Type::kDiffuse);
+	Engine::Texture n("Resources/Textures/PBR/nor.png", Engine::Texture::Type::kDiffuse);
+	Engine::Texture m("Resources/Textures/PBR/met.png", Engine::Texture::Type::kDiffuse);
+	Engine::Texture r("Resources/Textures/PBR/rou.png", Engine::Texture::Type::kDiffuse);
+	Engine::Texture ao("Resources/Textures/PBR/ao.png", Engine::Texture::Type::kDiffuse);
+	Engine::Texture h("Resources/Textures/PBR/height.png", Engine::Texture::Type::kDiffuse);
+	a.Create();
+	n.Create();
+	m.Create();
+	r.Create();
+	ao.Create();
+	h.Create();
+
+	glm::vec3 lightPositions[] = {
+		glm::vec3(-10.0f,  10.0f, 10.0f),
+		glm::vec3(10.0f,  10.0f, 10.0f),
+		glm::vec3(-10.0f, -10.0f, 10.0f),
+		glm::vec3(10.0f, -10.0f, 10.0f),
+	};
+	glm::vec3 lightColors[] = {
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f)
+	};
+
+	//----------------------------------------------------------------------------------------------------------
+	shader = m_ResourceManager.GetResource<Engine::Shader>("PBRShader");
+	shader->Use();
+	shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
+	//----------------------------------------------------------------------------------------------------------
 
 	//Reset after framebuffer
 	int window_width;
@@ -112,27 +184,51 @@ void Game::Start()
 
 		shader = m_ResourceManager.GetResource<Engine::Shader>("PBRShader");
 		shader->Use();
-		shader->SetVec3("light_position", glm::vec3(-10, 10, 10));
-		shader->SetVec3("light_color", glm::vec3(300.0f, 300.0f, 300.0f));
 		shader->SetVec3("camera_position", camera.m_Transform.GetPosition());
-
-		shader->SetVec3("material.albedo", glm::vec3(0.5f, 0.0f, 0.0f));
-		shader->SetFloat("material.metallic", 0.0f);
-		shader->SetFloat("material.roughness", 0.1f);
-		shader->SetFloat("material.ao", 1.0f);
-
 		shader->SetMat4("view", camera.GetViewMatrix());
-		shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
+		shader->SetFloat("displacement_factor", 105.0f);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.GetIraddianceMap());
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.GetPrefilterMap());
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, skybox.GetBRDFMap());
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, a.GetID());
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, n.GetID());
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, m.GetID());
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_2D, r.GetID());
+		glActiveTexture(GL_TEXTURE7);
+		glBindTexture(GL_TEXTURE_2D, ao.GetID());
+		glActiveTexture(GL_TEXTURE8);
+		glBindTexture(GL_TEXTURE_2D, h.GetID());
 
 		player.Render();
 		player2.Render();
+
+		//Lights
+		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+		{
+			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+			newPos = lightPositions[i];
+			m_ResourceManager.GetResource<Engine::Shader>("PBRShader")->SetVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+			m_ResourceManager.GetResource<Engine::Shader>("PBRShader")->SetVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+		}
 
 		//Skybox
 		shader = m_ResourceManager.GetResource<Engine::Shader>("SkyboxShader");
 		shader->Use();
 		shader->SetMat4("view", glm::mat4(glm::mat3(camera.GetViewMatrix())));
 		shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
-		skybox.Render();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.GetCubeMap());
+		glBindVertexArray(m_ResourceManager.GetResource<Engine::Model>("SkyboxCube")->GetMeshes()[0].GetVAO());
+		glDrawElements(GL_TRIANGLES, m_ResourceManager.GetResource<Engine::Model>("SkyboxCube")->GetMeshes()[0].GetSize(), GL_UNSIGNED_INT, 0);
 
 		window.SwapAndPoll();
 	}
