@@ -8,6 +8,7 @@ namespace Engine
 	class Camera : public GameObject
 	{
 	public:
+		Camera();
 		Camera(glm::vec3 const& position);
 		void Update();
 		glm::mat4 const& GetViewMatrix() const { return m_ViewMatrix; }

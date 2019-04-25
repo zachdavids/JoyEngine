@@ -5,6 +5,11 @@
 
 //TODO ADD 3RD PERSON CAMERA 
 
+Engine::Camera::Camera()
+{
+	CalculateViewMatrix();
+}
+
 Engine::Camera::Camera(glm::vec3 const& position)
 {
 	m_Transform.SetLocalPosition(position);

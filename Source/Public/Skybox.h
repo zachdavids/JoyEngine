@@ -3,6 +3,7 @@
 #include "ResourceManager.h"
 #include "Shader.h"
 #include "Model.h"
+#include "Camera.h"
 
 #include <string>
 #include <vector>
@@ -12,9 +13,9 @@ namespace Engine
 	class Skybox
 	{
 	public:
-		Skybox(ResourceManager const& resource_manager);
+		Skybox();
 		void Create();
-		void Render();
+		void Render(Camera const& camera);
 		unsigned int GetHDRTexture() const { return m_HDRTexture.GetID(); }
 		unsigned int GetCubeMap() const { return m_CubeMap; }
 		unsigned int GetIraddianceMap() const { return m_IrradianceMap; }

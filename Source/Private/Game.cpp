@@ -24,18 +24,9 @@ void Game::Start()
 {
 	m_WindowManager.Create();
 	m_ResourceManager.Create();
+	m_Level.Create();
 
-	//Temp---------------------------------------------
-	Engine::Player player(glm::vec3(0.f,0.f,0.f));
-	Engine::Player player2(glm::vec3(0.f, 0.f, 0.f));
-	Engine::Camera camera(glm::vec3(0.f, 0.f, 3.f));
 	Engine::Shader* shader;
-	//camera.AttachTo(&player);
-
-	Engine::Skybox skybox(m_ResourceManager);
-	skybox.Create();
-
-	//-------------------------------------------------
 	shader = Engine::ResourceManager::Get()->GetResource<Engine::Shader>("PBRShader");
 	shader->Use();
 	shader->SetInt("irradiance", 0);
@@ -47,6 +38,7 @@ void Game::Start()
 	shader->SetInt("roughness", 6);
 	shader->SetInt("ao", 7);
 	shader->SetInt("height", 8);
+	shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
 
 	shader = Engine::ResourceManager::Get()->GetResource<Engine::Shader>("SkyboxShader");
 	shader->Use();
@@ -78,13 +70,7 @@ void Game::Start()
 		glm::vec3(300.0f, 300.0f, 300.0f)
 	};
 
-	//----------------------------------------------------------------------------------------------------------
-	shader = Engine::ResourceManager::Get()->GetResource<Engine::Shader>("PBRShader");
-	shader->Use();
-	shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
-	//----------------------------------------------------------------------------------------------------------
-
-	//Reset after framebuffer
+	//Reset after framebuffer---------------------------------------------------------------------------------------------------
 	int window_width;
 	int window_height;
 	glfwGetFramebufferSize(Engine::WindowManager::Get()->GetWindow(), &window_width, &window_height);
@@ -96,27 +82,27 @@ void Game::Start()
 		//Inputs
 
 		//Updates
-		glm::vec3 light = glm::vec3(0.f);
-		light.x = 10.0f * sin(glfwGetTime());
-		light.y = 0.0f;
-		light.z = 10.0f * cos(glfwGetTime());
-		player.Update();
-		player2.m_Transform.SetLocalPosition(light);
-		player2.Update();
-		camera.Update();
+		m_Level.Update();
 
 		shader = Engine::ResourceManager::Get()->GetResource<Engine::Shader>("PBRShader");
 		shader->Use();
-		shader->SetVec3("camera_position", camera.m_Transform.GetPosition());
-		shader->SetMat4("view", camera.GetViewMatrix());
+		//Lights
+		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+		{
+			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+			newPos = lightPositions[i];
+			shader->SetVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+			shader->SetVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+		}
 		shader->SetFloat("displacement_factor", 105.0f);
 
+		//Remove GetSkybox()
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.GetIraddianceMap());
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_Level.GetSkybox().GetIraddianceMap());
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.GetPrefilterMap());
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_Level.GetSkybox().GetPrefilterMap());
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, skybox.GetBRDFMap());
+		glBindTexture(GL_TEXTURE_2D, m_Level.GetSkybox().GetBRDFMap());
 
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, a.GetID());
@@ -131,29 +117,7 @@ void Game::Start()
 		glActiveTexture(GL_TEXTURE8);
 		glBindTexture(GL_TEXTURE_2D, h.GetID());
 
-		player.Render();
-		player2.Render();
-
-		//Lights
-		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
-		{
-			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
-			newPos = lightPositions[i];
-			Engine::ResourceManager::Get()->GetResource<Engine::Shader>("PBRShader")->
-				SetVec3("lightPositions[" + std::to_string(i) + "]", newPos);
-			Engine::ResourceManager::Get()->GetResource<Engine::Shader>("PBRShader")->
-				SetVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
-		}
-
-		//Skybox
-		shader = Engine::ResourceManager::Get()->GetResource<Engine::Shader>("SkyboxShader");
-		shader->Use();
-		shader->SetMat4("view", glm::mat4(glm::mat3(camera.GetViewMatrix())));
-		shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.GetCubeMap());
-		glBindVertexArray(Engine::ResourceManager::Get()->GetResource<Engine::Model>("SkyboxCube")->GetMeshes()[0].GetVAO());
-		glDrawElements(GL_TRIANGLES, Engine::ResourceManager::Get()->GetResource<Engine::Model>("SkyboxCube")->GetMeshes()[0].GetSize(), GL_UNSIGNED_INT, 0);
+		m_Level.Render();
 
 		Engine::WindowManager::Get()->SwapAndPoll();
 	}

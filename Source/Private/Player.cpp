@@ -6,12 +6,15 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtx/transform.hpp>
 
-Engine::Player::Player(glm::vec3 position) :
-	m_Shader(ResourceManager::Get()->GetResource<Shader>("PBRShader")),
-	m_Model(ResourceManager::Get()->GetResource<Model>("Sphere"))
+Engine::Player::Player(glm::vec3 position)
 {
 	m_Transform.SetLocalPosition(position);
-	m_Transform.SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
+}
+
+void Engine::Player::Create()
+{
+	m_Shader = ResourceManager::Get()->GetResource<Shader>("PBRShader");
+	m_Model = ResourceManager::Get()->GetResource<Model>("Sphere");
 }
 
 void Engine::Player::Update()
@@ -23,7 +26,7 @@ void Engine::Player::Update()
 }
 
 //TODO temporary
-void Engine::Player::Render() const
+void Engine::Player::Render(Camera const& camera) const
 {
 	//TEMP
 	//---------------------------------------------------------------------------
@@ -33,6 +36,8 @@ void Engine::Player::Render() const
 	model = glm::scale(model, m_Transform.GetLocalScale());
 
 	m_Shader->Use();
+	m_Shader->SetVec3("camera_position", camera.m_Transform.GetPosition());
+	m_Shader->SetMat4("view", camera.GetViewMatrix());
 	m_Shader->SetMat4("model", model);
 	//---------------------------------------------------------------------------
 

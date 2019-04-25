@@ -10,15 +10,7 @@
 
 const std::string Engine::Skybox::m_Directory = "Resources/Textures/Skybox/daytime.hdr";
 
-Engine::Skybox::Skybox(ResourceManager const& resource_manager) :
-	m_HDRTexture(m_Directory, Texture::Type::kHDR),
-	m_SkyboxModel(resource_manager.GetResource<Model>("SkyboxCube")),
-	m_Quad(resource_manager.GetResource<Model>("Quad")),
-	m_Shader(resource_manager.GetResource<Shader>("SkyboxShader")),
-	m_ConversionShader(resource_manager.GetResource<Shader>("SkyboxConversionShader")),
-	m_IrradianceShader(resource_manager.GetResource<Shader>("SkyboxIrradianceShader")),
-	m_PrefilterShader(resource_manager.GetResource<Shader>("SkyboxPrefilterShader")),
-	m_BRDFShader(resource_manager.GetResource<Shader>("SkyboxBRDFShader"))
+Engine::Skybox::Skybox()
 {
 	m_Projection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 	m_CaptureViews[0] = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
@@ -31,6 +23,15 @@ Engine::Skybox::Skybox(ResourceManager const& resource_manager) :
 
 void Engine::Skybox::Create()
 {
+	m_HDRTexture = Texture(m_Directory, Texture::Type::kHDR);
+	m_SkyboxModel = Engine::ResourceManager::Get()->GetResource<Model>("SkyboxCube");
+	m_Quad = Engine::ResourceManager::Get()->GetResource<Model>("Quad");
+	m_Shader = Engine::ResourceManager::Get()->GetResource<Shader>("SkyboxShader");
+	m_ConversionShader = Engine::ResourceManager::Get()->GetResource<Shader>("SkyboxConversionShader");
+	m_IrradianceShader = Engine::ResourceManager::Get()->GetResource<Shader>("SkyboxIrradianceShader");
+	m_PrefilterShader = Engine::ResourceManager::Get()->GetResource<Shader>("SkyboxPrefilterShader");
+	m_BRDFShader = Engine::ResourceManager::Get()->GetResource<Shader>("SkyboxBRDFShader");
+
 	m_HDRTexture.CreateHDR();
 	GenerateCubemap();
 	GenerateIrradianceMap();
@@ -42,7 +43,6 @@ void Engine::Skybox::GenerateCubemap()
 {
 	glGenFramebuffers(1, &m_CaptureFBO);
 	glGenRenderbuffers(1, &m_CaptureRBO);
-
 	glBindFramebuffer(GL_FRAMEBUFFER, m_CaptureFBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_CaptureRBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
@@ -197,12 +197,13 @@ void Engine::Skybox::GenerateBRDF()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Engine::Skybox::Render()
+void Engine::Skybox::Render(Camera const& camera)
 {
 	m_Shader->Use();
-	glDepthFunc(GL_LEQUAL);
+	m_Shader->SetMat4("view", glm::mat4(glm::mat3(camera.GetViewMatrix())));
+	m_Shader->SetMat4("projection", glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMap);
 	glBindVertexArray(m_SkyboxModel->GetMeshes()[0].GetVAO());
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMap);
 	glDrawElements(GL_TRIANGLES, m_SkyboxModel->GetMeshes()[0].GetSize(), GL_UNSIGNED_INT, 0);
-	glDepthFunc(GL_LESS);
 }

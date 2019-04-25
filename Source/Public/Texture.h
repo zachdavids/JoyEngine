@@ -17,6 +17,7 @@ namespace Engine
 			kHDR
 		};
 
+		Texture() = default;
 		Texture(std::string const& path, Type type);
 		void Create();
 		void CreateHDR();
