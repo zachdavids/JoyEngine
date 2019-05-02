@@ -1,4 +1,6 @@
 # JoyEngine
+****
+
 A custom 3D game engine built with C++ using modern OpenGL. This engine was created to explore modern concepts of OpenGL and current rendering techniques used in the game industry.
 
 ### Features
